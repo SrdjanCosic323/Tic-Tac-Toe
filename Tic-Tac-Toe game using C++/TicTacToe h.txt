@@ -1,0 +1,26 @@
+#ifndef TIC_TAC_TOE_H
+#define TIC_TAC_TOE_H
+
+#include<iostream>
+using namespace std;
+
+class TicTacToe
+{
+	int userWins;
+	int computerWins;
+	string filename;
+	char* n;
+	void init(char* n);
+	void read_record();
+	void printTable();
+	int checkWin();
+	int countRem();
+	void write_record();
+	void showRem();
+public:
+	TicTacToe(string);
+	void run();
+	~TicTacToe();
+};
+
+#endif

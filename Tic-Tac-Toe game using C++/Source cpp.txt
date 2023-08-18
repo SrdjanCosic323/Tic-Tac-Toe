@@ -1,0 +1,11 @@
+#include <iostream>
+using namespace std;
+#include"TicTacToe.h"
+
+//Main function
+void main() 
+{
+	srand(time(NULL));
+	TicTacToe game("record.txt");
+	game.run();
+}

@@ -1,0 +1,309 @@
+#include"TicTacToe.h"
+#include<fstream>
+
+
+//This function will initialize the Values of Tic Tac Game
+//when Game starts for the first time
+// or when game ends and user plays the game again 
+void TicTacToe::init(char* n) 
+{
+	n[0] = '1';
+	n[1] = '2';
+	n[2] = '3';
+	n[3] = '4';
+	n[4] = '5';
+	n[5] = '6';
+	n[6] = '7';
+	n[7] = '8';
+	n[8] = '9';
+}
+
+void TicTacToe::read_record()
+{
+	ifstream file;
+	//opening the record.txt file for reading
+	file.open("record.txt");
+
+	//If file does not exists already, This means Program is running for the first time
+	if (file.fail()) //then record should be 0,0 for both
+	{
+		userWins = 0;
+		computerWins = 0;
+		ofstream out("record.txt");
+		out << "U:" << userWins << "C:" << computerWins << endl;
+		file.close();
+	}
+	else 
+	{
+		string temp;
+		file >> temp >> userWins >> temp >> computerWins;  //get the 2nd and 4th strings and directly assign them to your variables
+		file.close();                                   //close the file                                    //success
+	}
+}
+
+//function to print the Tic Tac Game
+void TicTacToe::printTable()
+{
+	system("cls");
+	cout << " User:" << userWins << "Computer:" << computerWins << endl;
+
+
+	cout << "     |     |     " << endl;
+	cout << "  " << n[0] << "  |  " << n[1] << "  |  " << n[2] << endl;
+
+	cout << "_____|_____|_____" << endl;
+	cout << "     |     |     " << endl;
+
+	cout << "  " << n[3] << "  |  " << n[4] << "  |  " << n[5] << endl;
+
+	cout << "_____|_____|_____" << endl;
+	cout << "     |     |     " << endl;
+
+	cout << "  " << n[6] << "  |  " << n[7] << "  |  " << n[8] << endl;
+
+	cout << "     |     |     " << endl << endl;
+
+
+}
+
+//function to detect and declare win
+int TicTacToe::checkWin() 
+{
+
+	//This variable will contain the winner's letter i.e. Human : 'X', Computer : 'O', Draw : 'N'
+	char winner = ' ';
+
+	//Winning Scenarios 
+
+	//Horizontal Matches
+	if (n[0] == n[1] && n[1] == n[2]) {
+		winner = n[0];
+	}
+	else if (n[3] == n[4] && n[4] == n[5]) {
+		winner = n[3];
+	}
+	else if (n[6] == n[7] && n[7] == n[8]) {
+		winner = n[6];
+	}
+
+	//Vertical Matches
+	else if (n[0] == n[3] && n[3] == n[6]) {
+		winner = n[0];
+	}
+	else if (n[1] == n[4] && n[4] == n[7]) {
+		winner = n[1];
+	}
+	else if (n[2] == n[5] && n[5] == n[8]) {
+		winner = n[2];
+	}
+	//Diagnal Matches
+	else if (n[0] == n[4] && n[4] == n[8]) {
+		winner = n[0];
+	}
+	else if (n[2] == n[4] && n[4] == n[6]) {
+		winner = n[6];
+	}
+	//If No move is remaining then No One is the Winner 
+	else if (countRem() == 0) {
+		winner = 'N';
+	}
+
+	// winner variable is not Empty then Announcing the Winner
+	if (winner != ' ') {
+
+		//Human is Winner 
+		if (winner == 'X') {
+
+			//increment the User Wins
+			userWins = userWins + 1;
+			//Show Updated Game Screen
+
+			printTable();
+			//Also update the record in the File
+			write_record();
+
+			//printing Congratulatory Message
+			cout << " You Won!" << endl;
+			/*	printf("\n\t****************************************************\n");
+				printf("\tYou Won! Congratulations! You are a True Champion!");
+				printf("\n\t****************************************************\n");*/
+
+
+		}
+		//Computer is Winner
+		else if (winner == 'O') {
+
+			//increment the computer Wins 
+			computerWins = computerWins + 1;
+			//Displaying the updated game screen
+
+			printTable();
+			//also writing the new record in the file
+			write_record();
+
+			//printing the message 
+			cout << " Computer Won! " << endl;
+			/*printf("\n\t**********************************************************************\n");
+			printf("\tComputer Won! It's Okay to Lose a game! After All, It's just a Game.");
+			printf("\n\t**********************************************************************\n");*/
+
+
+		}
+		//Draw
+		else {
+			cout << "It's a Draw!" << endl;
+
+			/*printf("\n\t**********************************\n");
+			printf("\tNo one Won! This Game is Draw!");
+			printf("\n\t**********************************\n");*/
+		}
+		//Return 1 means that Game has Ended
+		return 1;
+	}
+	else {
+		//Return 0 means Game should Continue
+		return 0;
+	}
+
+
+}
+
+//function to count the remaining options
+int TicTacToe::countRem() 
+{
+	int i, rem = 0;
+	for (i = 0; i < 9; i++) {
+		if (n[i] != 'O' && n[i] != 'X') {
+			rem++;
+		}
+	}
+	return rem;
+}
+
+void TicTacToe::write_record() 
+{
+	fstream file;
+	//Opening/Creating the File
+	file.open("record.txt");
+
+	//If file can't be created or opened
+	if (file.fail()) {
+		//printing error
+		cout << "Unable to create the File!" << endl;
+
+		//exiting the program
+		exit(1);
+	}
+
+	//writing the record of Human player and Computer
+	ofstream out("record.txt");
+	out << "U: " << userWins << " C: " << computerWins << endl;
+	//closing the file
+	file.close();
+}
+
+//function to show the remaining options out of 9
+void TicTacToe::showRem() 
+{
+	int i;
+	for (i = 0; i < 9; i++) {
+		if (n[i] != 'O' && n[i] != 'X') {
+			cout << n[i] << endl;
+		}
+	}
+}
+
+TicTacToe::TicTacToe(string fn) :userWins(0), computerWins(0), filename(fn)
+{
+	n = new char[9];
+	read_record();
+}
+
+void TicTacToe::run()
+{
+	int choice;
+	while (true)
+	{
+		cout << "1. Play Game" << endl;
+		cout << "2. Quit" << endl;
+		cout << "Enter your Choice" << endl;
+		cin >> choice;
+		while (choice < 1 || choice > 2)
+		{
+			cout << "Invalid choice. Enter Again = ";
+			cin >> choice;
+		}
+		if (choice == 1)
+		{
+			init(n);
+			while (true)
+			{
+				//Display Game
+				printTable();
+
+				//Detect for win and If Win is detected, Break the Loop and End the Game
+				if (checkWin() == 1)
+					break;
+
+				//show Remaining Options to user
+				cout << "Possible options" << endl;
+				showRem();
+
+				int ch;
+				//Loop to Keep Taking Input Choice from User untill valid choice is entered
+				try
+				{
+					while (true)
+					{
+						cout << "Enter your choice" << endl;
+						cin >> ch;
+						//If choice is already marked then ask to enter again
+						if (n[ch - 1] == 'X' || n[ch - 1] == 'O' || n[ch - 1] <= '0' || n[ch - 1] > '9')
+							cout << "Invalid Choice" << endl;
+						else //If choice is Valid then Stop asking for choice input
+							break;
+					}
+				}
+				catch (exception) //If user eneter value other than 1-9
+				{
+					cout << "Invalid Choie Entered";
+					break;
+				}
+
+				//Marked the choosed place with 'X' Symbol for Human Player
+				n[ch - 1] = 'X';
+
+				//  *** Computer Turn ***
+
+				//show the game
+				printTable();
+
+				//Detect for win
+				if (checkWin() == 1)
+					break;
+
+				//Keep taking random number from Computer untill valid choice comes 
+				while (true) 
+				{
+					//generating a random number from 0-8		
+					ch = rand() % 9;
+
+					//If number is not Marked then break the Loop
+					if (n[ch] != 'X' && n[ch] != 'O')
+						break;
+				}
+
+				//Mark the Computer choice (Randomly generated) with symbol 'O'
+				n[ch] = 'O';
+			}
+		}
+		else
+			break;
+	}
+}
+
+TicTacToe::~TicTacToe()
+{
+	delete[] n;
+	n = nullptr;
+}
